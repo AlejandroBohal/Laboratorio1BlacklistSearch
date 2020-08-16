@@ -21,15 +21,19 @@ public class CountThreadsMain {
         Thread thread3 = new Thread(countThread3);
 
         System.out.println("---------------");
+        System.out.println("Run Execution");
+        thread1.run();
+        thread2.run();
+        thread3.run();
+        System.out.println("---------------");
+
+
+        System.out.println("---------------");
         System.out.println("Start Execution");
         thread1.start();
         thread2.start();
         thread3.start();
         System.out.println("---------------");
-
-
-
-
     }
     
 }
