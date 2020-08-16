@@ -1,42 +1,48 @@
 package edu.eci.arsw.blacklistvalidator.threads;
 
-import edu.eci.arsw.blacklistvalidator.HostBlackListsValidator;
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BlackListThread extends Thread {
     private static final int BLACK_LIST_ALARM_COUNT = 5;
-    private int ocurrencesCount, initialServ, finalServ;
+    private AtomicInteger ocurrencesCount,checkListsCount;
+    private int initialServ,finalServ;
     private String ipAddress;
     private List<Integer> blackListOcurrences;
     private HostBlacklistsDataSourceFacade facade;
 
-    public BlackListThread(String ipAddress, HostBlacklistsDataSourceFacade facade, int initalServ, int finalServ){
+
+    public BlackListThread(String ipAddress, HostBlacklistsDataSourceFacade facade,List<Integer> blackListOcurrences,AtomicInteger checkListsCount,AtomicInteger ocurrencesCount, int initalServ, int finalServ){
         this.ipAddress = ipAddress;
         this.facade = facade;
         this.initialServ = initalServ;
         this.finalServ = finalServ;
+        this.blackListOcurrences = blackListOcurrences;
+        this.ocurrencesCount = ocurrencesCount;
+        this.checkListsCount = checkListsCount;
     }
 
     public void run(){
 
-        for (int i=initialServ;i<finalServ && ocurrencesCount<BLACK_LIST_ALARM_COUNT;i++){
+        for (int i=initialServ;i<finalServ && ocurrencesCount.get()<BLACK_LIST_ALARM_COUNT;i++){
 
+            checkListsCount.getAndIncrement();
             if (facade.isInBlackListServer(i, ipAddress)){
-
                 blackListOcurrences.add(i);
-
-                ocurrencesCount++;
+                ocurrencesCount.getAndIncrement();
             }
         }
+
+
     }
 
-    public int getOcurrencesCount() {
+    public AtomicInteger getOcurrencesCount() {
         return ocurrencesCount;
     }
 
-    public void setOcurrencesCount(int ocurrencesCount) {
+    public void setOcurrencesCount(AtomicInteger ocurrencesCount) {
         this.ocurrencesCount = ocurrencesCount;
     }
 
@@ -70,6 +76,14 @@ public class BlackListThread extends Thread {
 
     public void setBlackListOcurrences(List<Integer> blackListOcurrences) {
         this.blackListOcurrences = blackListOcurrences;
+    }
+
+    public AtomicInteger getCheckListsCount() {
+        return checkListsCount;
+    }
+
+    public void setCheckListsCount(AtomicInteger checkListsCount) {
+        this.checkListsCount = checkListsCount;
     }
 
     public HostBlacklistsDataSourceFacade getFacade() {
