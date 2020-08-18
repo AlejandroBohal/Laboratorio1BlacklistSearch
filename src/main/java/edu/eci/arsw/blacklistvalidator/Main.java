@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package edu.eci.arsw.blacklistvalidator;
-
+import java.lang.Runtime;
 import java.util.List;
 
 /**
@@ -12,11 +12,20 @@ import java.util.List;
  * @author hcadavid
  */
 public class Main {
-    
+
     public static void main(String[] a){
+        int processors = getProcessors();
+        long start = System.currentTimeMillis();
         HostBlackListsValidator hblv=new HostBlackListsValidator();
-        List<Integer> blackListOcurrences=hblv.checkHost("200.24.34.55", 6);
+        List<Integer> blackListOcurrences=hblv.checkHost("202.24.34.55", 100);
+        long end = System.currentTimeMillis();
         System.out.println("The host was found in the following blacklists:"+blackListOcurrences);
+        System.out.println("Elapsed time: "+(end-start)+" ms");
         
+    }
+    private static int getProcessors(){
+        Runtime runtime = Runtime.getRuntime();
+        int processors = runtime.availableProcessors();
+        return processors;
     }
 }
