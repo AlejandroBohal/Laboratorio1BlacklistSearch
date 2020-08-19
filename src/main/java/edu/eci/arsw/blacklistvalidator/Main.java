@@ -14,7 +14,7 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] a){
-        int processors = getProcessors(), threads = 3000;
+        int processors = getProcessors(), threads = 500;
         long start = System.currentTimeMillis();
         HostBlackListsValidator hblv=new HostBlackListsValidator();
         List<Integer> blackListOcurrences=hblv.checkHost("202.24.34.55", threads);
